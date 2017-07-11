@@ -1,49 +1,85 @@
 #include <stdio.h>
-#include <unistd.h>
 #include <stdlib.h>
 
 
-typedef struct node{
-    struct node* next;
-    struct node* prev;
-    int data;
-}node;
+struct Node {
+	int data;
+	struct Node* next;
+	struct Node* prev;
+};
 
-node* createNode(int new_data){
-    node* new_node = (node*)malloc(sizeof(node));
-    new_node->data = new_data;
-    new_node->next = NULL;
-    new_node->prev = NULL;
-    return new_node;
+struct Node* createNode(int n){
+	struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+	newNode->data = n;
+	newNode->next = NULL;
+	newNode->prev = NULL;
+	return newNode;
+}
+ 
+void insertAtHead(struct Node** head_ref, int n){
+	struct Node* newNode = createNode(n);
+	// check if list is empty
+	if(*head_ref == NULL){
+		*head_ref = newNode;
+		return; 
+	}
+	// list is not empty
+	struct Node* head = *head_ref;
+	head->prev = newNode;
+	newNode->next = head;
+	*head_ref = newNode;
 }
 
-void push(node** head_ref, int new_data){
-    node* new_node = createNode(new_data);
-    new_node->next = *head_ref;
-    if((*head_ref) != NULL){
-        (*head_ref)->prev = new_node;
-    } 
-    (*head_ref) = new_node;
+void insertAtTail(struct Node** head_ref, int n){
+	struct Node* newNode = createNode(n);
+	// check if list is empty
+	if(*head_ref == NULL){
+		*head_ref = newNode;
+		return; 
+	}
+	struct Node* temp = *head_ref;
+	while(temp->next!= NULL){
+		temp = temp->next;
+	}
+	temp->next = newNode;
+	newNode->prev = temp;
 }
 
-void insertAfter(node* prev_node, int new_data){
-    if(prev_node==NULL){
-        printf("passed prevoud node cannot be NULL!\n");
-        return;
-    }
-    node* new_node = createNode(new_data);
-    new_node->next=prev_node->next;
-    new_node->prev=prev_node;
-    prev_node->next=new_node;
-    if(new_node->next != NULL){
-        new_node->next->prev = new_node;
-    }
+void printList(struct Node* head){
+	printf("Printing list ---------------------------- \n");
+	while(head!=NULL){
+		printf("%d -> ",head->data);
+		head = head->next;
+	}
+	printf("NULL\n");
 }
 
-void append(node** head_ref )
 
-int main(int argc, char const *argv[])
-{
-    
-    return 0;
+void reversePrintList(struct Node* head){
+	// go to end of list
+	struct Node* temp = head;
+	if(temp == NULL){
+		return;
+	}
+	while(temp->next!=NULL){
+		temp = temp->next;
+	}
+	printf("Printing list in reverse ---------------------------- \n");
+	while(temp!=NULL){
+		printf("%d -> ",temp->data);
+		temp = temp->prev;
+	}
+	printf("NULL\n");
 }
+
+int main(){
+
+	struct Node* head = NULL;
+	insertAtHead(&head, 2);
+	insertAtHead(&head, 1);
+	insertAtTail(&head, 3);
+	printList(head);
+	reversePrintList(head);
+	return 0;
+}
+
